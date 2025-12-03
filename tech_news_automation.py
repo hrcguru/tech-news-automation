@@ -34,16 +34,49 @@ class TechNewsAutomation:
         self.receiver_email = os.getenv('RECEIVER_EMAIL', self.sender_email)
         
         # Tech news RSS feeds
-        self.news_sources = {
-            '🔥 TechCrunch': 'https://techcrunch.com/feed/',
-            '💻 Hacker News': 'https://hnrss.org/frontpage?count=15',
-            '🔬 Ars Technica': 'https://feeds.arstechnica.com/arstechnica/index',
-            '📱 The Verge': 'https://www.theverge.com/tech/rss/index.xml',
-            '🌐 Wired': 'https://www.wired.com/feed/rss',
-            '🚀 GitHub Trends': 'https://github.com/trending/feed',
-            '🤖 AI News': 'https://www.artificialintelligence-news.com/feed/',
-            '💾 TechRadar': 'https://www.techradar.com/rss',
-        }
+       # PURE TECH SOURCES ONLY
+self.news_sources = {
+    # Hardware & Gadgets
+    '🖥️ AnandTech': 'https://www.anandtech.com/rss',
+    '📱 GSMArena': 'https://www.gsmarena.com/rss-news-reviews.php3',
+    '🔧 Tom\'s Hardware': 'https://www.tomshardware.com/feeds/all',
+    '🎮 Engadget': 'https://www.engadget.com/rss.xml',
+    
+    # Software & Development
+    '💻 Hacker News': 'https://hnrss.org/frontpage?count=20',
+    '🚀 GitHub Trends': 'https://github.com/trending/feed',
+    '🐍 Python.org': 'https://www.python.org/blogs/rss/',
+    '⚛️ React Blog': 'https://reactjs.org/feed.xml',
+    '📦 npm Blog': 'https://blog.npmjs.org/rss',
+    
+    # Tech News & Reviews
+    '🔥 TechCrunch': 'https://techcrunch.com/feed/',
+    '🔬 Ars Technica': 'https://feeds.arstechnica.com/arstechnica/index',
+    '📱 The Verge Tech': 'https://www.theverge.com/tech/rss/index.xml',
+    '🌐 Wired Tech': 'https://www.wired.com/feed/rss',
+    '🖥️ TechSpot': 'https://www.techspot.com/backend.xml',
+    
+    # AI & Emerging Tech
+    '🤖 OpenAI Blog': 'https://openai.com/blog/rss/',
+    '🧠 Google AI': 'https://ai.googleblog.com/feeds/posts/default',
+    '🚀 MIT Tech Review': 'https://www.technologyreview.com/feed/',
+    '🔮 The Next Web': 'https://thenextweb.com/feed/',
+    
+    # Security & Privacy
+    '🔒 Krebs Security': 'https://krebsonsecurity.com/feed/',
+    '🛡️ Schneier on Security': 'https://www.schneier.com/feed/',
+    '⚠️ Threatpost': 'https://threatpost.com/feed/',
+    
+    # Cloud & Infrastructure
+    '☁️ AWS Blog': 'https://aws.amazon.com/blogs/aws/feed/',
+    '🌀 Azure Blog': 'https://azure.microsoft.com/en-us/blog/feed/',
+    '📊 Google Cloud Blog': 'https://cloud.google.com/blog/rss',
+    
+    # Linux & Open Source
+    '🐧 Linux Journal': 'https://www.linuxjournal.com/node/feed',
+    '🐚 Ubuntu Blog': 'https://ubuntu.com/blog/feed',
+    '📦 Arch Linux News': 'https://archlinux.org/feeds/news/',
+}
         
         # Keywords to look for
         self.keywords = [
