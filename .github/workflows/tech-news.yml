@@ -48,11 +48,13 @@ jobs:
         SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
         SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
         RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+        ADDITIONAL_EMAILS: ${{ secrets.ADDITIONAL_EMAILS }}
       run: |
         echo "Creating .env file..."
         echo "SENDER_EMAIL=$SENDER_EMAIL" > .env
         echo "SENDER_PASSWORD=$SENDER_PASSWORD" >> .env
         echo "RECEIVER_EMAIL=$RECEIVER_EMAIL" >> .env
+        echo "ADDITIONAL_EMAILS=$ADDITIONAL_EMAILS" >> .env
         echo "GITHUB_ACTIONS=true" >> .env
         echo "Environment file created successfully"
     
