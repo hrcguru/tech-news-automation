@@ -33,59 +33,75 @@ class TechNewsAutomation:
         self.sender_password = os.getenv('SENDER_PASSWORD')
         self.receiver_email = os.getenv('RECEIVER_EMAIL', self.sender_email)
         
-        # Tech news RSS feeds
-       # PURE TECH SOURCES ONLY
-self.news_sources = {
-    # Hardware & Gadgets
-    '🖥️ AnandTech': 'https://www.anandtech.com/rss',
-    '📱 GSMArena': 'https://www.gsmarena.com/rss-news-reviews.php3',
-    '🔧 Tom\'s Hardware': 'https://www.tomshardware.com/feeds/all',
-    '🎮 Engadget': 'https://www.engadget.com/rss.xml',
-    
-    # Software & Development
-    '💻 Hacker News': 'https://hnrss.org/frontpage?count=20',
-    '🚀 GitHub Trends': 'https://github.com/trending/feed',
-    '🐍 Python.org': 'https://www.python.org/blogs/rss/',
-    '⚛️ React Blog': 'https://reactjs.org/feed.xml',
-    '📦 npm Blog': 'https://blog.npmjs.org/rss',
-    
-    # Tech News & Reviews
-    '🔥 TechCrunch': 'https://techcrunch.com/feed/',
-    '🔬 Ars Technica': 'https://feeds.arstechnica.com/arstechnica/index',
-    '📱 The Verge Tech': 'https://www.theverge.com/tech/rss/index.xml',
-    '🌐 Wired Tech': 'https://www.wired.com/feed/rss',
-    '🖥️ TechSpot': 'https://www.techspot.com/backend.xml',
-    
-    # AI & Emerging Tech
-    '🤖 OpenAI Blog': 'https://openai.com/blog/rss/',
-    '🧠 Google AI': 'https://ai.googleblog.com/feeds/posts/default',
-    '🚀 MIT Tech Review': 'https://www.technologyreview.com/feed/',
-    '🔮 The Next Web': 'https://thenextweb.com/feed/',
-    
-    # Security & Privacy
-    '🔒 Krebs Security': 'https://krebsonsecurity.com/feed/',
-    '🛡️ Schneier on Security': 'https://www.schneier.com/feed/',
-    '⚠️ Threatpost': 'https://threatpost.com/feed/',
-    
-    # Cloud & Infrastructure
-    '☁️ AWS Blog': 'https://aws.amazon.com/blogs/aws/feed/',
-    '🌀 Azure Blog': 'https://azure.microsoft.com/en-us/blog/feed/',
-    '📊 Google Cloud Blog': 'https://cloud.google.com/blog/rss',
-    
-    # Linux & Open Source
-    '🐧 Linux Journal': 'https://www.linuxjournal.com/node/feed',
-    '🐚 Ubuntu Blog': 'https://ubuntu.com/blog/feed',
-    '📦 Arch Linux News': 'https://archlinux.org/feeds/news/',
-}
+        # Tech news RSS feeds - PURE TECH SOURCES ONLY
+        self.news_sources = {
+            # Hardware & Gadgets
+            '🖥️ AnandTech': 'https://www.anandtech.com/rss',
+            '📱 GSMArena': 'https://www.gsmarena.com/rss-news-reviews.php3',
+            '🔧 Tom\'s Hardware': 'https://www.tomshardware.com/feeds/all',
+            '🎮 Engadget': 'https://www.engadget.com/rss.xml',
+            
+            # Software & Development
+            '💻 Hacker News': 'https://hnrss.org/frontpage?count=20',
+            '🚀 GitHub Trends': 'https://github.com/trending/feed',
+            '🐍 Python.org': 'https://www.python.org/blogs/rss/',
+            '⚛️ React Blog': 'https://reactjs.org/feed.xml',
+            '📦 npm Blog': 'https://blog.npmjs.org/rss',
+            
+            # Tech News & Reviews
+            '🔥 TechCrunch': 'https://techcrunch.com/feed/',
+            '🔬 Ars Technica': 'https://feeds.arstechnica.com/arstechnica/index',
+            '📱 The Verge Tech': 'https://www.theverge.com/tech/rss/index.xml',
+            '🌐 Wired Tech': 'https://www.wired.com/feed/rss',
+            '🖥️ TechSpot': 'https://www.techspot.com/backend.xml',
+            
+            # AI & Emerging Tech
+            '🤖 OpenAI Blog': 'https://openai.com/blog/rss/',
+            '🧠 Google AI': 'https://ai.googleblog.com/feeds/posts/default',
+            '🚀 MIT Tech Review': 'https://www.technologyreview.com/feed/',
+            '🔮 The Next Web': 'https://thenextweb.com/feed/',
+            
+            # Security & Privacy
+            '🔒 Krebs Security': 'https://krebsonsecurity.com/feed/',
+            '🛡️ Schneier on Security': 'https://www.schneier.com/feed/',
+            '⚠️ Threatpost': 'https://threatpost.com/feed/',
+            
+            # Cloud & Infrastructure
+            '☁️ AWS Blog': 'https://aws.amazon.com/blogs/aws/feed/',
+            '🌀 Azure Blog': 'https://azure.microsoft.com/en-us/blog/feed/',
+            '📊 Google Cloud Blog': 'https://cloud.google.com/blog/rss',
+            
+            # Linux & Open Source
+            '🐧 Linux Journal': 'https://www.linuxjournal.com/node/feed',
+            '🐚 Ubuntu Blog': 'https://ubuntu.com/blog/feed',
+            '📦 Arch Linux News': 'https://archlinux.org/feeds/news/',
+        }
         
-        # Keywords to look for
+        # Tech keywords to look for
         self.keywords = [
-            'AI', 'Artificial Intelligence', 'Machine Learning',
-            'Python', 'JavaScript', 'React', 'Vue', 'Node.js',
-            'Startup', 'Funding', 'VC', 'Investment',
-            'Cybersecurity', 'Data Science', 'Cloud',
-            'AWS', 'Azure', 'Google Cloud', 'OpenAI',
-            'Apple', 'Microsoft', 'Google', 'Meta', 'Tesla'
+            # Programming
+            'Python', 'JavaScript', 'TypeScript', 'React', 'Vue', 'Node.js',
+            'Java', 'C++', 'Rust', 'Go', 'Kotlin', 'Swift',
+            
+            # AI/ML
+            'AI', 'Artificial Intelligence', 'Machine Learning', 'Deep Learning',
+            'Neural Network', 'LLM', 'GPT', 'Transformer',
+            
+            # Cloud & DevOps
+            'AWS', 'Azure', 'GCP', 'Google Cloud', 'Kubernetes', 'Docker',
+            'DevOps', 'CI/CD', 'Microservices', 'Serverless',
+            
+            # Security
+            'Cybersecurity', 'Encryption', 'Zero Trust', 'VPN', 'Firewall',
+            'Malware', 'Ransomware', 'Phishing',
+            
+            # Hardware
+            'CPU', 'GPU', 'RAM', 'SSD', 'NVIDIA', 'AMD', 'Intel',
+            'Smartphone', 'Laptop', 'Processor', 'Chip',
+            
+            # Emerging Tech
+            'Quantum', 'Blockchain', 'IoT', 'AR', 'VR', 'Metaverse',
+            '5G', '6G', 'Autonomous', 'Drone',
         ]
         
         logger.info(f"Running in {'GitHub Actions' if self.is_github_actions else 'Local'} mode")
