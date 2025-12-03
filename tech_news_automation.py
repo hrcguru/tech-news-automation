@@ -343,42 +343,62 @@ class TechNewsAutomation:
         return html
     
     def send_email(self, html_content):
-        """Send email via Gmail SMTP"""
+        """Send email to multiple recipients using BCC"""
         
         if not all([self.sender_email, self.sender_password]):
             logger.error("❌ Email credentials missing in .env file")
             return False
         
+        # Get all recipients
+        receiver_email = self.receiver_email
+        additional_emails_str = os.getenv('ADDITIONAL_EMAILS', '')
+        
+        # Parse additional emails
+        additional_emails = []
+        if additional_emails_str:
+            additional_emails = [email.strip() for email in additional_emails_str.split(',') if email.strip()]
+        
+        # Combine and remove duplicates
+        all_recipients = list(set([receiver_email] + additional_emails))
+        
+        if len(all_recipients) == 0:
+            logger.error("❌ No recipient emails found")
+            return False
+        
+        logger.info(f"📧 Preparing email for {len(all_recipients)} recipients")
+        
         try:
-            # Create email message
+            # Create email
             msg = MIMEMultipart('alternative')
             msg['Subject'] = f"📡 Tech News Digest - {datetime.now().strftime('%b %d, %Y')}"
             msg['From'] = f"Tech News Bot <{self.sender_email}>"
-            msg['To'] = self.receiver_email
             
-            # Attach HTML content
+            # Set TO and BCC
+            msg['To'] = receiver_email
+            if len(all_recipients) > 1:
+                bcc_recipients = all_recipients[1:]  # All except first
+                msg['Bcc'] = ', '.join(bcc_recipients)
+                logger.info(f"  To: {receiver_email}")
+                logger.info(f"  BCC: {len(bcc_recipients)} recipients")
+            
+            # Attach HTML
             msg.attach(MIMEText(html_content, 'html'))
             
-            # Try different SMTP configurations
+            # Send email
             try:
-                # Try SSL on port 465 first
-                logger.info("📤 Attempting email via SSL (port 465)...")
                 server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10)
                 server.login(self.sender_email, self.sender_password)
                 server.send_message(msg)
                 server.quit()
                 
             except Exception as e1:
-                logger.warning(f"SSL failed, trying TLS (port 587)... Error: {e1}")
-                
-                # Try TLS on port 587
                 server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)
                 server.starttls()
                 server.login(self.sender_email, self.sender_password)
                 server.send_message(msg)
                 server.quit()
             
-            logger.info(f"✅ Email sent successfully to {self.receiver_email}")
+            logger.info(f"✅ Email sent to {len(all_recipients)} recipients successfully")
             return True
             
         except Exception as e:
