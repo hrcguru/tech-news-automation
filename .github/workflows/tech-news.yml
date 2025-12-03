@@ -1,0 +1,27 @@
+name: Daily Tech News Email
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - run: pip install feedparser requests beautifulsoup4 python-dotenv
+    - name: Set up environment
+      env:
+        SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+        SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+        RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+      run: |
+        echo "SENDER_EMAIL=$SENDER_EMAIL" > .env
+        echo "SENDER_PASSWORD=$SENDER_PASSWORD" >> .env
+        echo "RECEIVER_EMAIL=$RECEIVER_EMAIL" >> .env
+        echo "GITHUB_ACTIONS=true" >> .env
+    - run: python tech_news_automation.py
