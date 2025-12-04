@@ -1,5 +1,5 @@
 """
-Tech News Automation - Dual Mode (Local HTML / GitHub Email)
+India News Automation - Dual Mode (Local HTML / GitHub Email)
 """
 
 import feedparser
@@ -23,7 +23,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-class TechNewsAutomation:
+class IndiaNewsAutomation:
     def __init__(self):
         # Check if running on GitHub Actions
         self.is_github_actions = os.getenv('GITHUB_ACTIONS') == 'true'
@@ -33,82 +33,123 @@ class TechNewsAutomation:
         self.sender_password = os.getenv('SENDER_PASSWORD')
         self.receiver_email = os.getenv('RECEIVER_EMAIL', self.sender_email)
         
-        # Tech news RSS feeds - PURE TECH SOURCES ONLY
+        # Indian Government Approved News Sources
         self.news_sources = {
-            # Hardware & Gadgets
-            '🖥️ AnandTech': 'https://www.anandtech.com/rss',
-            '📱 GSMArena': 'https://www.gsmarena.com/rss-news-reviews.php3',
-            '🔧 Tom\'s Hardware': 'https://www.tomshardware.com/feeds/all',
-            '🎮 Engadget': 'https://www.engadget.com/rss.xml',
+            # Official Government News Portals
+            '🇮🇳 PIB (Press Information Bureau)': 'https://pib.gov.in/rssfeed.aspx',
+            '🏛️ DD News': 'https://www.ddnews.gov.in/rss.xml',
+            '📻 All India Radio': 'https://www.newsonair.gov.in/rss-feed',
             
-            # Software & Development
-            '💻 Hacker News': 'https://hnrss.org/frontpage?count=20',
-            '🚀 GitHub Trends': 'https://github.com/trending/feed',
-            '🐍 Python.org': 'https://www.python.org/blogs/rss/',
-            '⚛️ React Blog': 'https://reactjs.org/feed.xml',
-            '📦 npm Blog': 'https://blog.npmjs.org/rss',
+            # National News Agencies
+            '📰 PTI (Press Trust of India)': 'https://www.ptinews.com/rss',
+            '🔄 UNI (United News of India)': 'https://www.uniindia.com/rssfeed',
+            '🏆 ANI (Asian News International)': 'https://www.aninews.in/rss/',
             
-            # Tech News & Reviews
-            '🔥 TechCrunch': 'https://techcrunch.com/feed/',
-            '🔬 Ars Technica': 'https://feeds.arstechnica.com/arstechnica/index',
-            '📱 The Verge Tech': 'https://www.theverge.com/tech/rss/index.xml',
-            '🌐 Wired Tech': 'https://www.wired.com/feed/rss',
-            '🖥️ TechSpot': 'https://www.techspot.com/backend.xml',
+            # Mainstream National Newspapers (Govt approved/recognized)
+            '📚 The Hindu': 'https://www.thehindu.com/feeder/default.rss',
+            '📰 Times of India': 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms',
+            '🗞️ Hindustan Times': 'https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml',
+            '📊 Indian Express': 'https://indianexpress.com/feed/',
+            '🌅 The Tribune': 'https://www.tribuneindia.com/rss/feed',
+            '📡 Deccan Herald': 'https://www.deccanherald.com/rss.php',
             
-            # AI & Emerging Tech
-            '🤖 OpenAI Blog': 'https://openai.com/blog/rss/',
-            '🧠 Google AI': 'https://ai.googleblog.com/feeds/posts/default',
-            '🚀 MIT Tech Review': 'https://www.technologyreview.com/feed/',
-            '🔮 The Next Web': 'https://thenextweb.com/feed/',
+            # Business & Economy
+            '💼 Business Standard': 'https://www.business-standard.com/rss/home_page_top_stories.rss',
+            '📈 Economic Times': 'https://economictimes.indiatimes.com/rssfeedsdefault.cms',
+            '💰 Mint': 'https://www.livemint.com/rss/news',
+            '🏦 Business Today': 'https://www.businesstoday.in/rssfeeds',
             
-            # Security & Privacy
-            '🔒 Krebs Security': 'https://krebsonsecurity.com/feed/',
-            '🛡️ Schneier on Security': 'https://www.schneier.com/feed/',
-            '⚠️ Threatpost': 'https://threatpost.com/feed/',
+            # Science & Technology (Indian Focus)
+            '🔬 CSIR News': 'https://www.csir.res.in/rss.xml',
+            '🚀 ISRO News': 'https://www.isro.gov.in/rss.xml',
+            '💡 DST (Dept of Science & Tech)': 'https://dst.gov.in/rss.xml',
+            '🧪 NITI Aayog': 'https://www.niti.gov.in/rss.xml',
+            '🏥 ICMR (Indian Council of Medical Research)': 'https://main.icmr.nic.in/rss.xml',
             
-            # Cloud & Infrastructure
-            '☁️ AWS Blog': 'https://aws.amazon.com/blogs/aws/feed/',
-            '🌀 Azure Blog': 'https://azure.microsoft.com/en-us/blog/feed/',
-            '📊 Google Cloud Blog': 'https://cloud.google.com/blog/rss',
+            # International Relations & Defence
+            '🌐 Ministry of External Affairs': 'https://www.mea.gov.in/rss-feed.htm',
+            '🛡️ Ministry of Defence': 'https://pib.gov.in/defence.aspx',
+            '⚓ Indian Navy': 'https://www.indiannavy.nic.in/rss.xml',
+            '✈️ Indian Air Force': 'https://indianairforce.nic.in/rss.xml',
             
-            # Linux & Open Source
-            '🐧 Linux Journal': 'https://www.linuxjournal.com/node/feed',
-            '🐚 Ubuntu Blog': 'https://ubuntu.com/blog/feed',
-            '📦 Arch Linux News': 'https://archlinux.org/feeds/news/',
-            'The Hindu': 'https://rss.app/feeds/rK2B1m9nqvOj8VuP.xml'
+            # Regional News (Major Languages)
+            '🎭 Eenadu (Telugu)': 'https://www.eenadu.net/rss/rssfeed.xml',
+            '🌸 Malayala Manorama': 'https://www.manoramaonline.com/rss/rssFeed.xml',
+            '🌺 Daily Thanthi (Tamil)': 'https://www.dailythanthi.com/rssfeeds',
+            '🌼 Anandabazar Patrika (Bengali)': 'https://www.anandabazar.com/rss',
+            '🌻 Dainik Bhaskar (Hindi)': 'https://www.bhaskar.com/rss-feed/',
+            '🌾 Dainik Jagran (Hindi)': 'https://www.jagran.com/rss',
+            
+            # Educational & Research
+            '🎓 UGC News': 'https://www.ugc.gov.in/rss.xml',
+            '📚 NCERT': 'https://ncert.nic.in/rss.xml',
+            '🔍 ICSSR': 'https://icssr.org/rss.xml',
+            
+            # Cultural & Historical
+            '🏛️ Archaeological Survey of India': 'https://asi.nic.in/rss.xml',
+            '🎨 Ministry of Culture': 'https://www.indiaculture.nic.in/rss.xml',
+            '📜 National Archives': 'https://nationalarchives.nic.in/rss.xml',
+            
+            # State Government News
+            '🏙️ Delhi Govt News': 'https://delhi.gov.in/rss.xml',
+            '🌊 Tamil Nadu Govt': 'https://www.tn.gov.in/rss.xml',
+            '⛰️ Karnataka Govt': 'https://www.karnataka.gov.in/rss.xml',
+            '🌄 Maharashtra Govt': 'https://www.maharashtra.gov.in/rss.xml',
+            
+            # Policy & Governance
+            '📋 PRS Legislative Research': 'https://prsindia.org/theprsblog/feed',
+            '⚖️ Supreme Court of India': 'https://main.sci.gov.in/rss.xml',
+            '🏛️ Parliament of India': 'https://parliamentofindia.nic.in/rss.xml'
         }
         
-        # Tech keywords to look for
-        self.keywords = [
-            # Programming
-            'Python', 'JavaScript', 'TypeScript', 'React', 'Vue', 'Node.js',
-            'Java', 'C++', 'Rust', 'Go', 'Kotlin', 'Swift',
-            
-            # AI/ML
-            'AI', 'Artificial Intelligence', 'Machine Learning', 'Deep Learning',
-            'Neural Network', 'LLM', 'GPT', 'Transformer',
-            
-            # Cloud & DevOps
-            'AWS', 'Azure', 'GCP', 'Google Cloud', 'Kubernetes', 'Docker',
-            'DevOps', 'CI/CD', 'Microservices', 'Serverless',
-            
-            # Security
-            'Cybersecurity', 'Encryption', 'Zero Trust', 'VPN', 'Firewall',
-            'Malware', 'Ransomware', 'Phishing',
-            
-            # Hardware
-            'CPU', 'GPU', 'RAM', 'SSD', 'NVIDIA', 'AMD', 'Intel',
-            'Smartphone', 'Laptop', 'Processor', 'Chip',
-            
-            # Emerging Tech
-            'Quantum', 'Blockchain', 'IoT', 'AR', 'VR', 'Metaverse',
-            '5G', '6G', 'Autonomous', 'Drone',
-        ]
+        # Keywords for categorization
+        self.keywords = {
+            'international_relations': [
+                'MEA', 'External Affairs', 'Diplomacy', 'Bilateral', 'Multilateral',
+                'UN', 'United Nations', 'SAARC', 'BRICS', 'G20', 'QUAD',
+                'Foreign Policy', 'Embassy', 'Consulate', 'Visa', 'Passport',
+                'Trade Agreement', 'Defence Cooperation', 'Strategic Partnership'
+            ],
+            'economy': [
+                'GDP', 'Inflation', 'RBI', 'Repo Rate', 'CRR', 'SLR',
+                'Fiscal Deficit', 'Current Account', 'Trade Deficit',
+                'Stock Market', 'Sensex', 'Nifty', 'BSE', 'NSE',
+                'GST', 'Direct Tax', 'Indirect Tax', 'Budget', 'Union Budget',
+                'FDI', 'Foreign Investment', 'Export', 'Import', 'Trade'
+            ],
+            'national_news': [
+                'Prime Minister', 'President', 'Cabinet', 'Ministry',
+                'Parliament', 'Lok Sabha', 'Rajya Sabha', 'Session',
+                'Election', 'Voting', 'ECI', 'Election Commission',
+                'State Government', 'Governor', 'Chief Minister',
+                'Police', 'Law and Order', 'Security', 'Internal Security'
+            ],
+            'science_tech': [
+                'ISRO', 'Space', 'Satellite', 'Rocket', 'Launch',
+                'CSIR', 'Research', 'Innovation', 'Technology',
+                'Startup', 'Digital India', 'Make in India',
+                'AI', 'Artificial Intelligence', 'Machine Learning',
+                'Renewable Energy', 'Solar', 'Wind', 'Nuclear'
+            ],
+            'history': [
+                'Archaeology', 'Heritage', 'Monument', 'ASI',
+                'Ancient', 'Medieval', 'Modern History',
+                'Independence', 'Freedom Struggle', 'Gandhi',
+                'Culture', 'Tradition', 'Festival', 'Art', 'Music'
+            ],
+            'political_news': [
+                'Political Party', 'BJP', 'Congress', 'AAP', 'TMC', 'DMK',
+                'Alliance', 'Coalition', 'Opposition', 'Ruling',
+                'Election Campaign', 'Rally', 'Manifesto',
+                'Bill', 'Act', 'Ordinance', 'Legislation',
+                'Vote', 'MP', 'MLA', 'Council', 'Assembly'
+            ]
+        }
         
         logger.info(f"Running in {'GitHub Actions' if self.is_github_actions else 'Local'} mode")
     
     def fetch_all_news(self):
-        """Get news from all sources"""
+        """Get news from all Indian government-approved sources"""
         all_articles = []
         
         for source_name, feed_url in self.news_sources.items():
@@ -116,14 +157,17 @@ class TechNewsAutomation:
                 logger.info(f"Fetching from {source_name}")
                 feed = feedparser.parse(feed_url)
                 
-                for entry in feed.entries[:8]:  # Get top 8 from each source
+                for entry in feed.entries[:10]:  # Get top 10 from each source
+                    # Combine title and summary for categorization
+                    content = entry.title + ' ' + entry.get('summary', '')
+                    
                     article = {
                         'source': source_name,
                         'title': entry.title[:150],
                         'link': entry.link,
                         'published': entry.get('published', 'Recent'),
                         'summary': entry.get('summary', 'No summary available')[:250],
-                        'relevance': self.check_relevance(entry.title + ' ' + entry.get('summary', ''))
+                        'categories': self.categorize_article(content)
                     }
                     
                     all_articles.append(article)
@@ -131,30 +175,33 @@ class TechNewsAutomation:
             except Exception as e:
                 logger.error(f"Error with {source_name}: {e}")
         
-        # Sort by relevance
-        all_articles.sort(key=lambda x: x['relevance'], reverse=True)
+        # Sort by number of categories (more relevant articles have more categories)
+        all_articles.sort(key=lambda x: len(x['categories']), reverse=True)
         
-        return all_articles[:30]  # Return top 30 articles
+        return all_articles[:40]  # Return top 40 articles
     
-    def check_relevance(self, text):
-        """Check how relevant the article is"""
-        score = 0
+    def categorize_article(self, text):
+        """Categorize article based on keywords"""
+        categories = []
         text_lower = text.lower()
         
-        for keyword in self.keywords:
-            if keyword.lower() in text_lower:
-                score += 2
+        for category, keywords in self.keywords.items():
+            for keyword in keywords:
+                if keyword.lower() in text_lower:
+                    if category not in categories:
+                        categories.append(category)
+                    break  # Found one keyword from this category, move to next
         
-        # Bonus for breaking/urgent news
-        urgency_words = ['breaking', 'urgent', 'critical', 'alert', 'exclusive']
-        for word in urgency_words:
-            if word in text_lower:
-                score += 1
-        
-        return score
+        return categories
     
     def create_html_content(self, articles):
         """Create beautiful HTML content for email or file"""
+        
+        # Count articles by category
+        category_count = {}
+        for article in articles:
+            for category in article['categories']:
+                category_count[category] = category_count.get(category, 0) + 1
         
         # Count articles per source
         source_count = {}
@@ -162,7 +209,7 @@ class TechNewsAutomation:
             source = article['source']
             source_count[source] = source_count.get(source, 0) + 1
         
-        source_summary = " | ".join([f"{source}: {count}" for source, count in source_count.items()])
+        category_summary = " | ".join([f"{cat}: {count}" for cat, count in category_count.items()])
         
         html = f"""
         <!DOCTYPE html>
@@ -170,110 +217,131 @@ class TechNewsAutomation:
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Tech News Digest - {datetime.now().strftime('%B %d, %Y')}</title>
+            <title>India News Digest - {datetime.now().strftime('%B %d, %Y')}</title>
             <style>
                 body {{
                     font-family: 'Segoe UI', Arial, sans-serif;
-                    max-width: 700px;
+                    max-width: 800px;
                     margin: 0 auto;
                     padding: 20px;
-                    background: #f5f7fa;
+                    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
                 }}
                 .email-container {{
                     background: white;
-                    border-radius: 10px;
+                    border-radius: 15px;
                     padding: 30px;
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                    border: 1px solid #e0e0e0;
                 }}
                 .header {{
-                    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-                    color: white;
-                    padding: 25px;
-                    border-radius: 8px;
+                    background: linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+                    color: #333;
+                    padding: 30px;
+                    border-radius: 10px;
                     text-align: center;
                     margin-bottom: 30px;
+                    border: 2px solid #000080;
                 }}
                 .header h1 {{
                     margin: 0;
-                    font-size: 28px;
+                    font-size: 32px;
+                    color: #000080;
+                    font-weight: bold;
                 }}
                 .header .date {{
-                    opacity: 0.9;
-                    font-size: 14px;
-                    margin-top: 5px;
+                    color: #666;
+                    font-size: 16px;
+                    margin-top: 10px;
+                    font-weight: 500;
                 }}
                 .stats {{
                     background: #e8f4fd;
-                    padding: 15px;
-                    border-radius: 6px;
+                    padding: 20px;
+                    border-radius: 8px;
                     margin-bottom: 25px;
-                    font-size: 14px;
+                    font-size: 15px;
                     color: #2c5282;
+                    border-left: 5px solid #000080;
                 }}
+                .category-badge {{
+                    display: inline-block;
+                    padding: 4px 12px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    margin-right: 8px;
+                    margin-bottom: 5px;
+                }}
+                .international {{ background: #4CAF50; color: white; }}
+                .economy {{ background: #2196F3; color: white; }}
+                .national {{ background: #F44336; color: white; }}
+                .science {{ background: #9C27B0; color: white; }}
+                .history {{ background: #FF9800; color: white; }}
+                .political {{ background: #795548; color: white; }}
+                
                 .article {{
-                    border-left: 4px solid #4299e1;
-                    padding: 15px;
-                    margin-bottom: 20px;
+                    border-left: 5px solid #000080;
+                    padding: 20px;
+                    margin-bottom: 25px;
                     background: #f8fafc;
-                    border-radius: 0 6px 6px 0;
+                    border-radius: 0 8px 8px 0;
+                    transition: transform 0.2s;
                 }}
-                .article.high-relevance {{
-                    border-left-color: #48bb78;
-                    background: #f0fff4;
+                .article:hover {{
+                    transform: translateX(5px);
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
                 }}
                 .article-title {{
-                    margin: 0 0 10px 0;
+                    margin: 0 0 12px 0;
                 }}
                 .article-title a {{
-                    color: #2d3748;
+                    color: #1a237e;
                     text-decoration: none;
-                    font-size: 18px;
+                    font-size: 20px;
                     font-weight: 600;
                 }}
                 .article-title a:hover {{
-                    color: #4299e1;
+                    color: #FF9933;
                     text-decoration: underline;
                 }}
                 .meta {{
-                    font-size: 13px;
-                    color: #718096;
-                    margin-bottom: 8px;
+                    font-size: 14px;
+                    color: #666;
+                    margin-bottom: 10px;
                 }}
                 .source {{
-                    background: #e2e8f0;
-                    padding: 2px 8px;
-                    border-radius: 12px;
-                    font-size: 12px;
+                    background: #000080;
+                    color: white;
+                    padding: 4px 12px;
+                    border-radius: 15px;
+                    font-size: 13px;
                     font-weight: bold;
                     margin-right: 10px;
                 }}
                 .summary {{
-                    font-size: 14px;
-                    color: #4a5568;
-                    line-height: 1.5;
-                }}
-                .relevance-badge {{
-                    background: #48bb78;
-                    color: white;
-                    padding: 2px 8px;
-                    border-radius: 10px;
-                    font-size: 11px;
-                    margin-left: 10px;
-                }}
-                .keywords {{
-                    margin-top: 20px;
-                    padding: 10px;
-                    background: #fffaf0;
-                    border-radius: 6px;
-                    font-size: 13px;
+                    font-size: 15px;
+                    color: #444;
+                    line-height: 1.6;
+                    margin: 10px 0;
                 }}
                 .footer {{
-                    margin-top: 30px;
+                    margin-top: 40px;
                     padding-top: 20px;
-                    border-top: 1px solid #e2e8f0;
+                    border-top: 2px dashed #ddd;
                     text-align: center;
-                    color: #a0aec0;
-                    font-size: 12px;
+                    color: #666;
+                    font-size: 13px;
+                }}
+                .category-section {{
+                    margin: 30px 0;
+                    padding: 15px;
+                    background: #f0f8ff;
+                    border-radius: 8px;
+                }}
+                .category-section h3 {{
+                    color: #000080;
+                    border-bottom: 2px solid #FF9933;
+                    padding-bottom: 8px;
                 }}
                 @media (max-width: 600px) {{
                     body {{
@@ -283,7 +351,7 @@ class TechNewsAutomation:
                         padding: 15px;
                     }}
                     .article-title a {{
-                        font-size: 16px;
+                        font-size: 18px;
                     }}
                 }}
             </style>
@@ -291,50 +359,87 @@ class TechNewsAutomation:
         <body>
             <div class="email-container">
                 <div class="header">
-                    <h1>📰 Your Tech News Digest</h1>
+                    <h1>🇮🇳 India News Digest</h1>
                     <div class="date">{datetime.now().strftime("%A, %B %d, %Y")}</div>
+                    <div style="margin-top: 10px; font-size: 14px; color: #555;">
+                        Curated from Government Approved Sources
+                    </div>
                 </div>
                 
                 <div class="stats">
                     <strong>📊 Today's Summary:</strong> {len(articles)} articles from {len(source_count)} sources<br>
-                    <strong>📌 Sources:</strong> {source_summary}
+                    <strong>📌 Categories:</strong> {category_summary}<br>
+                    <strong>🏛️ Sources Active:</strong> {len(source_count)} government-approved portals
                 </div>
                 
-                <h2>🎯 Top Stories</h2>
+                <h2 style="color: #000080; border-bottom: 3px solid #FF9933; padding-bottom: 10px;">
+                    📰 Top Stories Across Categories
+                </h2>
         """
         
-        # Add each article
-        for i, article in enumerate(articles, 1):
-            relevance_class = "high-relevance" if article['relevance'] > 0 else ""
-            relevance_badge = f'<span class="relevance-badge">Relevant</span>' if article['relevance'] > 0 else ""
-            
-            html += f"""
-                <div class="article {relevance_class}">
-                    <h3 class="article-title">
-                        {i}. <a href="{article['link']}" target="_blank">{article['title']}</a>
-                        {relevance_badge}
-                    </h3>
-                    <div class="meta">
-                        <span class="source">{article['source']}</span>
-                        📅 {article['published']}
-                    </div>
-                    <div class="summary">
-                        {article['summary']}...
-                        <a href="{article['link']}" style="color: #4299e1; font-size: 12px;">[Read more]</a>
-                    </div>
-                </div>
-            """
+        # Group articles by category for better organization
+        categorized_articles = {}
+        for article in articles:
+            for category in article['categories']:
+                if category not in categorized_articles:
+                    categorized_articles[category] = []
+                categorized_articles[category].append(article)
         
-        # Add footer
-        html += f"""
-                <div class="keywords">
-                    <strong>🔍 Tracking keywords:</strong> {', '.join(self.keywords[:8])}...
-                </div>
+        # Display articles category-wise
+        category_display_names = {
+            'international_relations': '🌐 International Relations',
+            'economy': '💰 Economy & Business',
+            'national_news': '🏛️ National News',
+            'science_tech': '🔬 Science & Technology',
+            'history': '📜 History & Culture',
+            'political_news': '⚖️ Political News'
+        }
+        
+        for category_id in self.keywords.keys():
+            if category_id in categorized_articles:
+                category_name = category_display_names.get(category_id, category_id.replace('_', ' ').title())
+                html += f"""
+                <div class="category-section">
+                    <h3>{category_name}</h3>
+                """
                 
+                for article in categorized_articles[category_id][:5]:  # Top 5 per category
+                    # Create category badges
+                    badges_html = ""
+                    for cat in article['categories']:
+                        display_name = cat.replace('_', ' ')
+                        badges_html += f'<span class="category-badge {cat}">{display_name.title()}</span>'
+                    
+                    html += f"""
+                    <div class="article">
+                        <h3 class="article-title">
+                            <a href="{article['link']}" target="_blank">{article['title']}</a>
+                        </h3>
+                        <div class="meta">
+                            <span class="source">{article['source']}</span>
+                            📅 {article['published']}
+                        </div>
+                        <div>
+                            {badges_html}
+                        </div>
+                        <div class="summary">
+                            {article['summary']}...
+                            <a href="{article['link']}" style="color: #138808; font-weight: bold; font-size: 13px;">[Read Full Story]</a>
+                        </div>
+                    </div>
+                    """
+                
+                html += "</div>"
+        
+        # Add footer with disclaimer
+        html += f"""
                 <div class="footer">
-                    <p>This email was automatically generated by your Tech News Automation system.</p>
-                    <p>💡 Tip: Check your spam folder if you don't see these emails regularly</p>
-                    <p>Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+                    <p><strong>Disclaimer:</strong> This digest aggregates news only from Indian government-approved and recognized sources.</p>
+                    <p>All content is sourced from official government portals, PIB, and mainstream recognized media houses.</p>
+                    <p>Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} IST</p>
+                    <p style="color: #000080; font-weight: bold; margin-top: 15px;">
+                        जय हिन्द! 🇮🇳
+                    </p>
                 </div>
             </div>
         </body>
@@ -371,8 +476,8 @@ class TechNewsAutomation:
         try:
             # Create email
             msg = MIMEMultipart('alternative')
-            msg['Subject'] = f"📡 Tech News Digest - {datetime.now().strftime('%b %d, %Y')}"
-            msg['From'] = f"Tech News Bot <{self.sender_email}>"
+            msg['Subject'] = f"🇮🇳 India News Digest - {datetime.now().strftime('%b %d, %Y')}"
+            msg['From'] = f"India News Digest <{self.sender_email}>"
             
             # Set TO and BCC
             msg['To'] = receiver_email
@@ -411,7 +516,7 @@ class TechNewsAutomation:
         try:
             # Create filename with timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-            filename = f"Tech_News_Digest_{timestamp}.html"
+            filename = f"India_News_Digest_{timestamp}.html"
             
             # Save file
             with open(filename, 'w', encoding='utf-8') as f:
@@ -436,22 +541,22 @@ class TechNewsAutomation:
     def run(self):
         """Main function to run the entire process"""
         logger.info("=" * 60)
-        logger.info("🚀 STARTING TECH NEWS AUTOMATION")
+        logger.info("🚀 STARTING INDIA NEWS AUTOMATION")
         logger.info("=" * 60)
         
         try:
             # Step 1: Fetch news
-            logger.info("📥 Fetching latest tech news...")
+            logger.info("📥 Fetching latest India news from government sources...")
             articles = self.fetch_all_news()
             
             if not articles:
                 logger.warning("No articles found!")
                 return
             
-            logger.info(f"✅ Found {len(articles)} articles")
+            logger.info(f"✅ Found {len(articles)} articles from Indian sources")
             
             # Step 2: Create HTML content
-            logger.info("📧 Creating email content...")
+            logger.info("📧 Creating digest content...")
             html_content = self.create_html_content(articles)
             
             # Step 3: Send email or save file based on mode
@@ -461,7 +566,7 @@ class TechNewsAutomation:
                 success = self.send_email(html_content)
                 
                 if success:
-                    logger.info("🎉 Email sent successfully via GitHub Actions!")
+                    logger.info("🎉 India News Digest sent successfully via GitHub Actions!")
                 else:
                     logger.error("💥 Failed to send email")
                     
@@ -478,16 +583,18 @@ class TechNewsAutomation:
                     
                     # Show summary in terminal
                     print("\n" + "="*60)
-                    print("📊 TODAY'S TOP STORIES:")
+                    print("📊 TODAY'S TOP INDIA NEWS:")
                     print("="*60)
                     for i, article in enumerate(articles[:5], 1):
                         print(f"{i}. {article['title']}")
                         print(f"   📍 Source: {article['source']}")
-                        print(f"   🔗 Link: {article['link'][:80]}...")
+                        categories = ", ".join(article['categories'])
+                        if categories:
+                            print(f"   🏷️  Categories: {categories}")
                         print()
                 
-                # Also try to send email locally (might fail due to firewall)
-                logger.info("🔄 Attempting local email send (may fail due to firewall)...")
+                # Also try to send email locally
+                logger.info("🔄 Attempting local email send...")
                 if self.sender_email and self.sender_password:
                     self.send_email(html_content)
             
@@ -501,9 +608,8 @@ class TechNewsAutomation:
 
 def main():
     """Run the automation"""
-    automation = TechNewsAutomation()
+    automation = IndiaNewsAutomation()
     automation.run()
 
 if __name__ == "__main__":
     main()
-
