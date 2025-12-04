@@ -75,6 +75,7 @@ class TechNewsAutomation:
             '🐧 Linux Journal': 'https://www.linuxjournal.com/node/feed',
             '🐚 Ubuntu Blog': 'https://ubuntu.com/blog/feed',
             '📦 Arch Linux News': 'https://archlinux.org/feeds/news/',
+            'The Hindu': 'https://rss.app/feeds/rK2B1m9nqvOj8VuP.xml'
         }
         
         # Tech keywords to look for
@@ -505,3 +506,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
